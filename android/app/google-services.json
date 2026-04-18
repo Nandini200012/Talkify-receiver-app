@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "254343291851",
+    "project_id": "talikify-user",
+    "storage_bucket": "talikify-user.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254343291851:android:24888de6202b776e900c4e",
+        "android_client_info": {
+          "package_name": "com.example.receiver_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBP8myDgVeiza71jbBFHbMf0BvppwR7WZw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254343291851:android:b6484cba54ceab58900c4e",
+        "android_client_info": {
+          "package_name": "com.example.user_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBP8myDgVeiza71jbBFHbMf0BvppwR7WZw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
