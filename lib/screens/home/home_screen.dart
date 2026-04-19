@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (auth.userModel != null) {
       final callProvider = Provider.of<CallProvider>(context, listen: false);
       callProvider.listenForIncomingCalls(auth.userModel!.uid, context);
-      callProvider.requestPermissions(); // Request permissions initially
+      callProvider.requestPermissions();
       _isListening = true;
     }
   }
@@ -43,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    // Background presence is now handled by BackgroundService
   }
 
   void _showLogoutConfirmation() {
@@ -85,12 +84,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     final auth = Provider.of<AuthProvider>(context);
     final callProvider = Provider.of<CallProvider>(context);
 
-    // Listen for incoming call in the UI using a more robust method
     if (callProvider.currentCall != null &&
         callProvider.currentCall!.status == 'ringing' &&
         !callProvider.isShowingIncomingUI) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        // Double check condition inside callback
         if (mounted &&
             !callProvider.isShowingIncomingUI &&
             ModalRoute.of(context)?.isCurrent == true) {
@@ -102,8 +99,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   const IncomingCallScreen(),
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
-                return FadeTransition(opacity: animation, child: child);
-              },
+                    return FadeTransition(opacity: animation, child: child);
+                  },
               transitionDuration: const Duration(milliseconds: 250),
             ),
           );

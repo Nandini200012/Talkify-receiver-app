@@ -86,7 +86,6 @@ class _IncomingCallScreenState extends State<IncomingCallScreen>
     return Scaffold(
       body: Stack(
         children: [
-          // Background Visuals
           Positioned.fill(
             child: isVideo
                 ? Container(
@@ -252,17 +251,18 @@ class _IncomingCallScreenState extends State<IncomingCallScreen>
                                             animation,
                                             secondaryAnimation,
                                           ) => const CallScreen(),
-                                      transitionsBuilder: (
-                                        context,
-                                        animation,
-                                        secondaryAnimation,
-                                        child,
-                                      ) {
-                                        return FadeTransition(
-                                          opacity: animation,
-                                          child: child,
-                                        );
-                                      },
+                                      transitionsBuilder:
+                                          (
+                                            context,
+                                            animation,
+                                            secondaryAnimation,
+                                            child,
+                                          ) {
+                                            return FadeTransition(
+                                              opacity: animation,
+                                              child: child,
+                                            );
+                                          },
                                       transitionDuration: const Duration(
                                         milliseconds: 250,
                                       ),

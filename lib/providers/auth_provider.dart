@@ -36,9 +36,9 @@ class AuthProvider extends ChangeNotifier {
   Future<void> updatePresence(bool isOnline) async {
     if (_auth.currentUser != null) {
       try {
-        await _firestore.collection('users').doc(_auth.currentUser!.uid).update({
-          'isOnline': isOnline,
-        });
+        await _firestore.collection('users').doc(_auth.currentUser!.uid).update(
+          {'isOnline': isOnline},
+        );
         if (_userModel != null) {
           _userModel = UserModel(
             uid: _userModel!.uid,
@@ -60,18 +60,24 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      DocumentSnapshot doc = await _firestore.collection('users').doc(uid).get();
+      DocumentSnapshot doc = await _firestore
+          .collection('users')
+          .doc(uid)
+          .get();
       if (doc.exists) {
         _userModel = UserModel.fromMap(doc.data() as Map<String, dynamic>);
-        // Update FCM token
+
         String? token = await _fcm.getToken();
         if (token != null) {
-          await _firestore.collection('users').doc(uid).update({'fcmToken': token});
+          await _firestore.collection('users').doc(uid).update({
+            'fcmToken': token,
+          });
         }
-        
-        // Listen for token refreshes
+
         _fcm.onTokenRefresh.listen((newToken) {
-          _firestore.collection('users').doc(uid).update({'fcmToken': newToken});
+          _firestore.collection('users').doc(uid).update({
+            'fcmToken': newToken,
+          });
         });
       }
     } catch (e) {
@@ -126,11 +132,13 @@ class AuthProvider extends ChangeNotifier {
         isOnline: true,
       );
 
-      await _firestore.collection('users').doc(newUser.uid).set(newUser.toMap());
-      
-      // Sign out immediately so registration doesn't lead to direct login
+      await _firestore
+          .collection('users')
+          .doc(newUser.uid)
+          .set(newUser.toMap());
+
       await logout();
-      
+
       _isLoading = false;
       notifyListeners();
       return true;

@@ -5,11 +5,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint("Handling background message: ${message.messageId}");
-  
-  // Show notification even in background for data-only messages
-  final FlutterLocalNotificationsPlugin localNotifications = FlutterLocalNotificationsPlugin();
-  
-  // Re-create the channel for the background isolate
+
+  final FlutterLocalNotificationsPlugin localNotifications =
+      FlutterLocalNotificationsPlugin();
+
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'high_importance_channel',
     'High Importance Notifications',
@@ -18,8 +17,12 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     playSound: true,
   );
 
-  String title = message.notification?.title ?? message.data['title'] ?? 'Incoming Call';
-  String body = message.notification?.body ?? message.data['body'] ?? 'You have a new call';
+  String title =
+      message.notification?.title ?? message.data['title'] ?? 'Incoming Call';
+  String body =
+      message.notification?.body ??
+      message.data['body'] ??
+      'You have a new call';
 
   await localNotifications.show(
     message.hashCode,
@@ -32,7 +35,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         channelDescription: channel.description,
         importance: Importance.max,
         priority: Priority.high,
-        fullScreenIntent: true, // Crucial for background calls
+        fullScreenIntent: true,
       ),
     ),
   );
@@ -53,14 +56,13 @@ class FCMService {
       );
 
   Future<void> initNotifications() async {
-    // Request permissions
     NotificationSettings settings = await _fcm.requestPermission(
       alert: true,
       badge: true,
       sound: true,
       provisional: false,
     );
-    
+
     debugPrint('User granted permission: ${settings.authorizationStatus}');
 
     const AndroidInitializationSettings initializationSettingsAndroid =
@@ -72,7 +74,6 @@ class FCMService {
       initializationSettings,
       onDidReceiveNotificationResponse: (details) {
         debugPrint("Notification tapped: ${details.payload}");
-        // Add navigation logic here if needed
       },
     );
 
@@ -82,21 +83,17 @@ class FCMService {
         >()
         ?.createNotificationChannel(_callChannel);
 
-    // Register background handler
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint("Foreground message received: ${message.messageId}");
       _showLocalNotification(message);
     });
 
-    // Handle app opening from notification
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       _handleMessage(message);
     });
 
-    // Handle initial message if app was terminated
     RemoteMessage? initialMessage = await _fcm.getInitialMessage();
     if (initialMessage != null) {
       _handleMessage(initialMessage);
@@ -107,8 +104,10 @@ class FCMService {
     RemoteNotification? notification = message.notification;
     AndroidNotification? android = message.notification?.android;
 
-    String title = notification?.title ?? message.data['title'] ?? 'Incoming Call';
-    String body = notification?.body ?? message.data['body'] ?? 'You have a new call';
+    String title =
+        notification?.title ?? message.data['title'] ?? 'Incoming Call';
+    String body =
+        notification?.body ?? message.data['body'] ?? 'You have a new call';
 
     _localNotifications.show(
       message.hashCode,
@@ -130,7 +129,6 @@ class FCMService {
 
   void _handleMessage(RemoteMessage message) {
     debugPrint("Handling notification message data: ${message.data}");
-    // You can use a navigatorKey to navigate to the incoming call screen here
   }
 
   Future<String?> getToken() async {

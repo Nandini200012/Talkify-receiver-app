@@ -13,7 +13,6 @@ class BackgroundService {
   static Future<void> initializeService() async {
     final service = FlutterBackgroundService();
 
-    // Create notification channel
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'foreground_service_channel',
       'Talkify Online Status',
@@ -26,7 +25,8 @@ class BackgroundService {
 
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(channel);
 
     await service.configure(
@@ -61,7 +61,6 @@ class BackgroundService {
     DartPluginRegistrant.ensureInitialized();
     WidgetsFlutterBinding.ensureInitialized();
 
-    // Initialize Firebase in the background isolate
     try {
       if (Firebase.apps.isEmpty) {
         await Firebase.initializeApp(
@@ -71,7 +70,7 @@ class BackgroundService {
       }
     } catch (e) {
       debugPrint("Failed to initialize Firebase in background: $e");
-      // If we can't initialize Firebase, we can't continue with background tasks
+
       return;
     }
 
@@ -91,24 +90,23 @@ class BackgroundService {
       service.stopSelf();
     });
 
-    // Start real-time call monitoring in background isolate
     StreamSubscription? callSubscription;
-    
-    // Periodically ensure we are authenticated and listening
+
     Timer.periodic(const Duration(minutes: 5), (timer) async {
-       // Presence heartbeat
-       try {
+      try {
         final user = FirebaseAuth.instance.currentUser;
         if (user != null) {
-          await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-            'isOnline': true,
-            'lastSeen': FieldValue.serverTimestamp(),
-          });
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .update({
+                'isOnline': true,
+                'lastSeen': FieldValue.serverTimestamp(),
+              });
         }
       } catch (_) {}
     });
 
-    // Setup the call listener
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       callSubscription = FirebaseFirestore.instance

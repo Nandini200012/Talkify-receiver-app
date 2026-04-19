@@ -15,8 +15,10 @@ class _CallScreenState extends State<CallScreen> {
   Widget build(BuildContext context) {
     final callProvider = Provider.of<CallProvider>(context);
     final call = callProvider.currentCall;
-    
-    debugPrint("CallScreen Build: Joined=${callProvider.isJoined}, RemoteUID=${callProvider.remoteUid}");
+
+    debugPrint(
+      "CallScreen Build: Joined=${callProvider.isJoined}, RemoteUID=${callProvider.remoteUid}",
+    );
 
     if (call == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -27,21 +29,20 @@ class _CallScreenState extends State<CallScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: !callProvider.isEngineInitialized 
+      body: !callProvider.isEngineInitialized
           ? const Center(child: CircularProgressIndicator(color: Colors.white))
           : Stack(
               children: [
-                // Remote Video (Full Screen)
-                Positioned.fill(
-                  child: _remoteVideo(callProvider),
-                ),
-                
-                // Top Overlay (Call Info & Timer)
+                Positioned.fill(child: _remoteVideo(callProvider)),
+
                 SafeArea(
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -55,7 +56,10 @@ class _CallScreenState extends State<CallScreen> {
                           ),
                           const SizedBox(height: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.black38,
                               borderRadius: BorderRadius.circular(20),
@@ -87,20 +91,28 @@ class _CallScreenState extends State<CallScreen> {
                         height: 180,
                         color: Colors.black54,
                         child: callProvider.isJoined
-                            ? (callProvider.isCameraOff 
-                                ? Container(
-                                    color: Colors.black,
-                                    child: const Center(
-                                      child: Icon(Icons.videocam_off, color: Colors.white38, size: 40),
-                                    ),
-                                  )
-                                : AgoraVideoView(
-                                    controller: VideoViewController(
-                                      rtcEngine: callProvider.engine!,
-                                      canvas: const VideoCanvas(uid: 0),
-                                    ),
-                                  ))
-                            : const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                            ? (callProvider.isCameraOff
+                                  ? Container(
+                                      color: Colors.black,
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.videocam_off,
+                                          color: Colors.white38,
+                                          size: 40,
+                                        ),
+                                      ),
+                                    )
+                                  : AgoraVideoView(
+                                      controller: VideoViewController(
+                                        rtcEngine: callProvider.engine!,
+                                        canvas: const VideoCanvas(uid: 0),
+                                      ),
+                                    ))
+                            : const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
                       ),
                     ),
                   ),
@@ -134,15 +146,24 @@ class _CallScreenState extends State<CallScreen> {
                   radius: 72,
                   backgroundColor: Colors.indigo.shade400,
                   child: Text(
-                    callProvider.currentCall?.callerName[0].toUpperCase() ?? '?',
-                    style: const TextStyle(fontSize: 60, color: Colors.white, fontWeight: FontWeight.w200),
+                    callProvider.currentCall?.callerName[0].toUpperCase() ??
+                        '?',
+                    style: const TextStyle(
+                      fontSize: 60,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w200,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 30),
               const Text(
                 'Audio Call Active',
-                style: TextStyle(color: Colors.white70, fontSize: 18, letterSpacing: 1),
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 18,
+                  letterSpacing: 1,
+                ),
               ),
             ],
           ),
@@ -185,7 +206,9 @@ class _CallScreenState extends State<CallScreen> {
         controller: VideoViewController.remote(
           rtcEngine: callProvider.engine!,
           canvas: VideoCanvas(uid: callProvider.remoteUid),
-          connection: RtcConnection(channelId: callProvider.currentCall!.channelName),
+          connection: RtcConnection(
+            channelId: callProvider.currentCall!.channelName,
+          ),
         ),
       );
     } else {
@@ -210,17 +233,14 @@ class _CallScreenState extends State<CallScreen> {
 
   Widget _toolbar(CallProvider callProvider) {
     final isVideo = callProvider.currentCall?.callType == 'video';
-    
+
     return Container(
       padding: const EdgeInsets.only(bottom: 50, top: 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
-          colors: [
-            Colors.black.withOpacity(0.9),
-            Colors.transparent,
-          ],
+          colors: [Colors.black.withOpacity(0.9), Colors.transparent],
         ),
       ),
       child: Column(
@@ -232,13 +252,19 @@ class _CallScreenState extends State<CallScreen> {
               _circleButton(
                 onPressed: callProvider.toggleMute,
                 icon: callProvider.muted ? Icons.mic_off : Icons.mic,
-                color: callProvider.muted ? Colors.red.shade400 : Colors.white24,
+                color: callProvider.muted
+                    ? Colors.red.shade400
+                    : Colors.white24,
                 label: callProvider.muted ? 'Muted' : 'Mute',
               ),
               _circleButton(
                 onPressed: callProvider.toggleSpeaker,
-                icon: callProvider.isSpeakerOn ? Icons.volume_up : Icons.volume_down,
-                color: callProvider.isSpeakerOn ? Colors.green.shade700 : Colors.white24,
+                icon: callProvider.isSpeakerOn
+                    ? Icons.volume_up
+                    : Icons.volume_down,
+                color: callProvider.isSpeakerOn
+                    ? Colors.green.shade700
+                    : Colors.white24,
                 label: 'Speaker',
               ),
               if (isVideo)
@@ -251,8 +277,12 @@ class _CallScreenState extends State<CallScreen> {
               if (isVideo)
                 _circleButton(
                   onPressed: callProvider.toggleCamera,
-                  icon: callProvider.isCameraOff ? Icons.videocam_off : Icons.videocam,
-                  color: callProvider.isCameraOff ? Colors.red.shade400 : Colors.white24,
+                  icon: callProvider.isCameraOff
+                      ? Icons.videocam_off
+                      : Icons.videocam,
+                  color: callProvider.isCameraOff
+                      ? Colors.red.shade400
+                      : Colors.white24,
                   label: 'Camera',
                 ),
             ],
@@ -261,7 +291,8 @@ class _CallScreenState extends State<CallScreen> {
           RawMaterialButton(
             onPressed: () async {
               await callProvider.endCall();
-              if (mounted) Navigator.popUntil(context, (route) => route.isFirst);
+              if (mounted)
+                Navigator.popUntil(context, (route) => route.isFirst);
             },
             shape: const CircleBorder(),
             elevation: 2.0,
